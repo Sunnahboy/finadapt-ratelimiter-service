@@ -1,42 +1,36 @@
-# My-Adaptive-Backend
+# Adaptive Finance AI Backend & Rate Limiter
 
-This project was created using the [Ktor Project Generator](https://start.ktor.io).
+This project is the secure, high-performance middleware for the Adaptive Finance Android application. Built with Ktor, it acts as a secure proxy and traffic controller to protect third-party API quotas (like Groq) using a Redis-backed Token Bucket algorithm.
 
-Here are some useful links to get you started:
-
-- [Ktor Documentation](https://ktor.io/docs/home.html)
-- [Ktor GitHub page](https://github.com/ktorio/ktor)
-- The [Ktor Slack chat](https://app.slack.com/client/T09229ZC6/C0A974TJ9). You'll need
-  to [request an invite](https://surveys.jetbrains.com/s3/kotlin-slack-sign-up) to join.
+Here are some useful links for the core technologies used:
+* [Ktor Documentation](https://ktor.io/docs/home.html)
+* [Redisson (Redis Client) Documentation](https://github.com/redisson/redisson/wiki)
 
 ## Features
 
 Here's a list of features included in this project:
 
-| Name                                                                   | Description                                                                        |
-| ------------------------------------------------------------------------|------------------------------------------------------------------------------------ |
-| [Routing](https://start.ktor.io/p/routing)                             | Provides a structured routing DSL                                                  |
-| [Content Negotiation](https://start.ktor.io/p/content-negotiation)     | Provides automatic content conversion according to Content-Type and Accept headers |
-| [kotlinx.serialization](https://start.ktor.io/p/kotlinx-serialization) | Handles JSON serialization using kotlinx.serialization library                     |
+| Name | Description |
+| --- | --- |
+| **Routing** | Structured routing DSL for endpoints (e.g., `/api/chat`, `/api/scan`). |
+| **Token-Bucket Rate Limiter** | Redis-powered limits via `Redisson` to prevent API spam and DDoS attacks. Features TTL cleanup and dynamic limits per feature. |
+| **Content Negotiation** | Automatic content conversion according to `Content-Type` and `Accept` headers. |
+| **kotlinx.serialization** | High-performance JSON serialization using the native Kotlin library. |
 
 ## Building & Running
 
-To build or run the project, use one of the following tasks:
+To build or run the project locally, ensure you have a local Redis instance running (`redis://127.0.0.1:6379`), then use one of the following tasks:
 
-| Task                                    | Description                                                          |
-| -----------------------------------------|---------------------------------------------------------------------- |
-| `./gradlew test`                        | Run the tests                                                        |
-| `./gradlew build`                       | Build everything                                                     |
-| `./gradlew buildFatJar`                 | Build an executable JAR of the server with all dependencies included |
-| `./gradlew buildImage`                  | Build the docker image to use with the fat JAR                       |
-| `./gradlew publishImageToLocalRegistry` | Publish the docker image locally                                     |
-| `./gradlew run`                         | Run the server                                                       |
-| `./gradlew runDocker`                   | Run using the local docker image                                     |
+| Task | Description |
+| --- | --- |
+| `./gradlew test` | Run the tests |
+| `./gradlew build` | Build everything |
+| `./gradlew buildFatJar` | Build an executable JAR of the server with all dependencies included |
+| `./gradlew buildImage` | Build the docker image to use with the fat JAR for production deployment |
+| `./gradlew run` | Run the server locally |
 
-If the server starts successfully, you'll see the following output:
+If the server starts successfully, you'll see the following output in your terminal:
 
-```
+```text
 2024-12-04 14:32:45.584 [main] INFO  Application - Application started in 0.303 seconds.
-2024-12-04 14:32:45.682 [main] INFO  Application - Responding at http://0.0.0.0:8080
-```
-
+2024-12-04 14:32:45.682 [main] INFO  Application - Responding at [http://0.0.0.0:8080](http://0.0.0.0:8080)
