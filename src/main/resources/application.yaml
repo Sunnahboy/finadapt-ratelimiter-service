@@ -1,6 +1,9 @@
 ktor:
-  application:
-    modules:
-      - Rate.Limiter.ApplicationKt.module
   deployment:
     port: 8080
+  application:
+    modules:
+      - ApplicationKt.module
+
+redis:
+  url: "redis://127.0.0.1:6379"
