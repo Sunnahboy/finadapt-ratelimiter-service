@@ -4,7 +4,7 @@ This project is the secure, high-performance middleware for the **Adaptive Finan
 
 By abstracting API keys and request logic away from the client device, this backend ensures that malicious actors cannot steal quota or overload the system.
 
-### 📚 Core Technologies
+### Core Technologies
 
 * [Ktor Documentation](https://ktor.io/docs/welcome.html)
 * [Redisson (Redis Client) Documentation](https://redisson.org/)
@@ -12,7 +12,7 @@ By abstracting API keys and request logic away from the client device, this back
 
 ---
 
-## ✨ Features
+##  Features
 
 This backend is built to modern industrial standards, prioritizing security, memory efficiency, and strict request pipelines.
 
@@ -27,7 +27,7 @@ This backend is built to modern industrial standards, prioritizing security, mem
 
 ---
 
-## ⚙️ Configuration (`application.yaml`)
+##  Configuration (`application.yaml`)
 
 The server uses `EngineMain` to automatically inject configurations. By default, it expects a local Redis instance. For production, inject your managed Redis URL (e.g., AWS ElastiCache, Upstash) into the environment.
 
@@ -45,7 +45,7 @@ redis:
 
 ---
 
-## 🚀 Building & Running
+##  Building & Running
 
 To build or run the project locally, ensure you have a local Redis instance running on port `6379`. You can spin one up quickly using Docker: `docker run -p 6379:6379 -d redis`.
 
