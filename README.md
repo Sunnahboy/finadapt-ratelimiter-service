@@ -3,8 +3,8 @@
 This project is the secure, high-performance middleware for the Adaptive Finance Android application. Built with Ktor, it acts as a secure proxy and traffic controller to protect third-party API quotas (like Groq) using a Redis-backed Token Bucket algorithm.
 
 Here are some useful links for the core technologies used:
-* [Ktor Documentation](https://ktor.io/docs/home.html)
-* [Redisson (Redis Client) Documentation](https://github.com/redisson/redisson/wiki)
+* [Ktor Documentation](https://ktor.io/docs/welcome.html)
+* [Redisson (Redis Client) Documentation](https://redisson.pro/docs/)
 
 ## Features
 
