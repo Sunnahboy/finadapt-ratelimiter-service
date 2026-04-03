@@ -1,4 +1,62 @@
 package service
 
-class GroqClientService {
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.plugins.ClientRequestException
+import io.ktor.client.plugins.ServerResponseException
+import io.ktor.client.request.*
+import io.ktor.http.*
+import kotlinx.io.IOException
+import kotlinx.serialization.Serializable
+
+//1.Json structure endpoint expects and returns
+@Serializable data class GroqMessage(val role: String, val content: String)
+@Serializable data class GroqRequest(val model: String, val messages: List<GroqMessage>)
+@Serializable data class GroqChoice(val message: GroqMessage)
+@Serializable data class GroqResponse(val choices: List<GroqChoice>)
+
+
+class GroqClientService (
+    private val httpClient: HttpClient,
+    private val apiKey: String,
+    private val baseUrl: String,
+    private val model: String
+){
+    //Talks to the API endpoint
+    suspend fun askGroq(userPrompt: String): Result<String> {
+        return try {
+            val response: GroqResponse = httpClient.post(baseUrl){
+            header(HttpHeaders.Authorization, "Bearer $apiKey")
+            contentType(ContentType.Application.Json)
+            //JSON body
+            setBody(
+                GroqRequest(
+                    model = model,
+                    messages = listOf (GroqMessage(role = "user", content = userPrompt))
+                )
+            )
+        }.body()
+        val aiText = response.choices.firstOrNull()?.message?.content//extract actual text
+        if (aiText != null){
+            Result.success(aiText)
+        } else {
+            Result.failure(Exception("Groq API returned an empty response."))
+        }
+
+       } catch (e: ClientRequestException) {
+            //Catches 4xx errors
+            Result.failure(Exception("Client Error (${e.response.status}): Check API key or request format."))
+        } catch (e: ServerResponseException) {
+            //Catches 5xx errors
+            Result.failure(Exception("Provider Error (${e.response.status}): The AI service is currently unavailable."))
+        } catch (e: IOException) {
+            //Catches network failures (timeout, DNS resolution)
+            Result.failure(Exception("Network Error: Failed to connect to AI provider."))
+        } catch (e: Exception) {
+            //Fallback for everything
+            Result.failure(Exception("An unexpected error occurred: ${e.localizedMessage}"))
+        }
+
+
+    }
 }
