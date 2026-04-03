@@ -3,6 +3,7 @@ import io.ktor.server.netty.*
 import org.redisson.Redisson
 import org.redisson.client.codec.StringCodec
 import org.redisson.config.Config
+import routing.chatRoutes
 import service.RateLimiterService
 
 //Use EngineMain instead of embeddedServer so Ktor automatically reads application.yaml
