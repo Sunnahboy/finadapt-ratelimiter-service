@@ -32,6 +32,9 @@ fun Application.module() {
     //Create the rate limiter
     val rateLimiterService = RateLimiterService(redissonClient)
 
+    //formats into JSON string before sending it to the Android app
+    configureSerialization()
+
     // Dependency Availability - Inject into routing block
      chatRoutes(rateLimiterService)
 }
