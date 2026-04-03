@@ -1,4 +1,4 @@
-# Adaptive Finance AI Backend & Rate Limiter
+Markdown# Adaptive Finance AI Backend & Rate Limiter
 
 This project is the secure, high-performance middleware for the **Adaptive Finance** Android application. Built with Ktor 3.x, it acts as a secure proxy and traffic controller to protect third-party API quotas (e.g., OpenAI, Groq, custom LLMs) using a Redis-backed Token Bucket algorithm.
 
@@ -48,11 +48,5 @@ llm:
   apiKey: "YOUR_API_KEY_HERE"
   baseUrl: "[https://api.groq.com/openai/v1/chat/completions](https://api.groq.com/openai/v1/chat/completions)" # Or OpenAI, etc.
   model: "llama3-8b-8192"
-
- Building & Running
-To run the project locally, ensure you have filled out the application.yaml and have a local Redis instance running on port 6379. You can spin one up quickly using Docker:
-
-Bash
-docker run -p 6379:6379 -d redis
-
+🚀 Building & RunningTo run the project locally, ensure you have filled out the application.yaml and have a local Redis instance running on port 6379. You can spin one up quickly using Docker:Bashdocker run -p 6379:6379 -d redis
 Then, use one of the following Gradle tasks:TaskDescription./gradlew runRun the server locally. (Hot-reloads if configured)./gradlew testRun the test suite../gradlew buildBuild the entire project../gradlew buildFatJarBuild an executable JAR of the server with all dependencies included../gradlew buildImageBuild the Docker image to use with the fat JAR for production deployment.
