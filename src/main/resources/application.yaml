@@ -10,3 +10,5 @@ redis:
 
 groq:
   apiKey: "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"
+  baseUrl: "https://api.groq.com/openai/v1/chat/completions"
+  model: "llama-3.1-8b-instant"
