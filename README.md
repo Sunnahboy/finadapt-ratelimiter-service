@@ -1,4 +1,19 @@
-Markdown# Adaptive Finance AI Backend & Rate Limiter
+Gemini said
+Here is the straightforward answer to your two questions, followed by the perfectly formatted Markdown for your README that you can copy in one click.
+
+❓ Why show the YAML file in the README?
+Because you built a Fail-Fast architecture! If a new developer (or you, six months from now on a new laptop) clones this project and runs it, the server will instantly crash if those variables are missing. Showing the YAML block in the README acts as a blueprint. It tells anyone setting up the project exactly what keys they need to provide to make the server run.
+
+🛑 Do we push the .yaml file to Git?
+Yes, but NEVER with your real secrets in it.
+The industry standard is to commit your application.yaml to Git with placeholder text (like YOUR_API_KEY_HERE).
+
+When you deploy to a cloud provider (like AWS, Render, or Railway), you don't edit the YAML file on the server. Instead, you enter your real API keys into the cloud provider's "Environment Variables" dashboard.
+
+Here is the exact Markdown for your README. I put it all inside a single code block so you can just click "Copy code" in the top right corner and paste it directly into your README.md file.
+
+Markdown
+# Adaptive Finance AI Backend & Rate Limiter
 
 This project is the secure, high-performance middleware for the **Adaptive Finance** Android application. Built with Ktor 3.x, it acts as a secure proxy and traffic controller to protect third-party API quotas (e.g., OpenAI, Groq, custom LLMs) using a Redis-backed Token Bucket algorithm.
 
@@ -48,9 +63,18 @@ llm:
   apiKey: "YOUR_API_KEY_HERE"
   baseUrl: "[https://api.groq.com/openai/v1/chat/completions](https://api.groq.com/openai/v1/chat/completions)" # Or OpenAI, etc.
   model: "llama3-8b-8192"
-Task,Description
-./gradlew run,Run the server locally. (Hot-reloads if configured)
-./gradlew test,Run the test suite.
-./gradlew build,Build the entire project.
-./gradlew buildFatJar,Build an executable JAR of the server with all dependencies included.
-./gradlew buildImage,Build the Docker image to use with the fat JAR for production deployment.
+🚀 Building & Running
+To run the project locally, ensure you have filled out the application.yaml and have a local Redis instance running on port 6379. You can spin one up quickly using Docker:
+
+Bash
+docker run -p 6379:6379 -d redis
+Then, use one of the following Gradle tasks:
+
+Task	Description
+./gradlew run	Run the server locally. (Hot-reloads if configured)
+./gradlew test	Run the test suite.
+./gradlew build	Build the entire project.
+./gradlew buildFatJar	Build an executable JAR of the server with all dependencies included.
+./gradlew buildImage	Build the Docker image to use with the fat JAR for production deployment.
+
+Your server repository is completely locked in and documented like a pro. Should we fi
