@@ -4,7 +4,7 @@ This project is the secure, high-performance middleware for the **Adaptive Finan
 
 By abstracting API keys and request logic away from the client device, this backend ensures that malicious actors cannot steal quota, exploit secrets, or overload the system.
 
-###  Core Technologies
+### 📚 Core Technologies
 
 * [Ktor Documentation](https://ktor.io/docs/welcome.html)
 * [Redisson (Redis Client) Documentation](https://redisson.org/)
@@ -12,7 +12,7 @@ By abstracting API keys and request logic away from the client device, this back
 
 ---
 
-##  Features
+## ✨ Features
 
 This backend is built to modern industrial standards, prioritizing security, memory efficiency, and strict request pipelines.
 
@@ -48,5 +48,17 @@ llm:
   apiKey: "YOUR_API_KEY_HERE"
   baseUrl: "[https://api.groq.com/openai/v1/chat/completions](https://api.groq.com/openai/v1/chat/completions)" # Or OpenAI, etc.
   model: "llama3-8b-8192"
-🚀 Building & RunningTo run the project locally, ensure you have filled out the application.yaml and have a local Redis instance running on port 6379. You can spin one up quickly using Docker:Bashdocker run -p 6379:6379 -d redis
-Then, use one of the following Gradle tasks:TaskDescription./gradlew runRun the server locally. (Hot-reloads if configured)./gradlew testRun the test suite../gradlew buildBuild the entire project../gradlew buildFatJarBuild an executable JAR of the server with all dependencies included../gradlew buildImageBuild the Docker image to use with the fat JAR for production deployment.
+
+ Building & Running
+To run the project locally, ensure you have filled out the application.yaml and have a local Redis instance running on port 6379. You can spin one up quickly using Docker:
+
+Bash
+docker run -p 6379:6379 -d redis
+
+Task,Description
+./gradlew run,Run the server locally. (Hot-reloads if configured)
+./gradlew test,Run the test suite.
+./gradlew build,Build the entire project.
+./gradlew buildFatJar,Build an executable JAR of the server with all dependencies included.
+./gradlew buildImage,Build the Docker image to use with the fat JAR for production deployment.
+Then, use one of the following Gradle tasks:
