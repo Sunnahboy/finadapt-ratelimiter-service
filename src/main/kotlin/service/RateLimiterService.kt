@@ -19,16 +19,14 @@ enum class AppFeature(
 
 class RateLimiterService(private val redisson: RedissonClient) {
 
-    // 2. LOCAL CACHE: Remembers which buckets this server has already initialized.
     //remove "Redundant Network Calls" issue.
     private val initializedBuckets = ConcurrentHashMap.newKeySet<String>()
 
     fun tryAcquire(userId: String, feature: AppFeature): Boolean {
-        // Creates unique keys like
-        val bucketName = "rate_limit:groq:${feature.id}:$userId"
+        val bucketName = "rate_limit:llm:${feature.id}:$userId"
         val rateLimiter = redisson.getRateLimiter(bucketName)
 
-        // 3. CACHE CHECK: .add() returns true ONLY if the item wasn't already in the set.
+        //CACHE CHECK:  returns true ONLY if and only if the item wasn't already in the set.
         if (initializedBuckets.add(bucketName)) {
             //double check redis in case restarted but ktor didn't
             if (!rateLimiter.isExists) {
@@ -40,8 +38,7 @@ class RateLimiterService(private val redisson: RedissonClient) {
                 )
 
                 //if the user doesn't use this feature for 60 minutes,
-                //Redis will automatically delete the bucket to free up RAM.
-                rateLimiter.expire(Duration.ofMinutes(feature.ttlMinutes))
+                rateLimiter.expire(Duration.ofMinutes(feature.ttlMinutes)) // auto free up RAM.
             }
         }
 

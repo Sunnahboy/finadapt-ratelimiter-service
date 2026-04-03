@@ -1,40 +1,53 @@
+import routing.chatRoutes
+import service.RateLimiterService
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.netty.*
+import kotlinx.serialization.json.Json
 import org.redisson.Redisson
 import org.redisson.client.codec.StringCodec
 import org.redisson.config.Config
-import routing.chatRoutes
-import service.RateLimiterService
+import service.LlmClientService
 
 //Use EngineMain instead of embeddedServer so Ktor automatically reads application.yaml
 fun main(args: Array<String>): Unit = EngineMain.main(args)
 
 fun Application.module() {
+    configureSerialization()//formats into JSON string
 
-    //Pull from application.yaml (with a fallback)
-    val redisUrl = environment.config.propertyOrNull("redis.url")?.getString()
-        ?: "redis://127.0.0.1:6379"
+    //1. Load Secrets from application.yaml
+    val redisUrl = environment.config.property("redis.url").getString()
+    val llmApiKey = environment.config.property("llm.apiKey").getString()
+    val llmBaseUrl = environment.config.property("llm.baseUrl").getString()
+    val llmModel = environment.config.property("llm.model").getString()
 
-    //Initialize Redis
+
+    //2 Initialize Redis
     val config = Config()
     config.useSingleServer().address = redisUrl
-
-    //Tell Redisson not to use Jackson. Use Strings/Bytes instead (faster and uses less RAM).
-    config.codec = StringCodec.INSTANCE
+    config.codec = StringCodec.INSTANCE//Use Strings/Bytes (faster and uses less RAM)
     val redissonClient = Redisson.create(config)
 
-    //Zombie Connection (Resource Leak) Hook into the shutdown event
+    //connect into the shutdown event
     monitor.subscribe(ApplicationStopped) {
         log.info("Shutting down Redis connections...")
         redissonClient.shutdown()
     }
 
-    //Create the rate limiter
+    //3. Initialize the Ktor Http client
+    val httpClient = HttpClient(CIO){
+        install(plugin = ContentNegotiation){
+            json(Json { ignoreUnknownKeys = true })//ignore Monkeyshine
+        }
+    }
+
+    // 4. Create the Services
     val rateLimiterService = RateLimiterService(redissonClient)
+    val llmClientService = LlmClientService(httpClient, llmApiKey, llmBaseUrl, llmModel)
 
-    //formats into JSON string before sending it to the Android app
-    configureSerialization()
-
-    // Dependency Availability - Inject into routing block
-     chatRoutes(rateLimiterService)
+    //5. start the routes
+    chatRoutes(rateLimiterService, llmClientService)
 }

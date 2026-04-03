@@ -9,30 +9,29 @@ import io.ktor.http.*
 import kotlinx.io.IOException
 import kotlinx.serialization.Serializable
 
-//1.Json structure endpoint expects and returns
-@Serializable data class GroqMessage(val role: String, val content: String)
-@Serializable data class GroqRequest(val model: String, val messages: List<GroqMessage>)
-@Serializable data class GroqChoice(val message: GroqMessage)
-@Serializable data class GroqResponse(val choices: List<GroqChoice>)
+@Serializable data class LlmMessage(val role: String, val content: String)
+@Serializable data class LlmRequest(val model: String, val messages: List<LlmMessage>)
+@Serializable data class LlmChoice(val message: LlmMessage)
+@Serializable data class LlmResponse(val choices: List<LlmChoice>)
 
 
-class GroqClientService (
+class LlmClientService (
     private val httpClient: HttpClient,
     private val apiKey: String,
     private val baseUrl: String,
     private val model: String
 ){
     //Talks to the API endpoint
-    suspend fun askGroq(userPrompt: String): Result<String> {
+    suspend fun askAi(userPrompt: String): Result<String> {
         return try {
-            val response: GroqResponse = httpClient.post(baseUrl){
+            val response: LlmResponse = httpClient.post(baseUrl){
             header(HttpHeaders.Authorization, "Bearer $apiKey")
             contentType(ContentType.Application.Json)
             //JSON body
             setBody(
-                GroqRequest(
+                LlmRequest(
                     model = model,
-                    messages = listOf (GroqMessage(role = "user", content = userPrompt))
+                    messages = listOf (LlmMessage(role = "user", content = userPrompt))
                 )
             )
         }.body()
