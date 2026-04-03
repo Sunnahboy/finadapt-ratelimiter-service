@@ -24,6 +24,12 @@ dependencies {
     testImplementation("io.ktor:ktor-server-test-host")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:2.3.0")
     implementation("org.redisson:redisson:3.27.0")
+    //Ktor Client for making requests
+    implementation("io.ktor:ktor-client-core")
+    implementation("io.ktor:ktor-client-cio")
+    implementation("io.ktor:ktor-client-content-negotiation")
+    //ensure JSON works in the client
+    implementation("io.ktor:ktor-serialization-kotlinx-json")
 
     //SECURITY PATCHES
     constraints {

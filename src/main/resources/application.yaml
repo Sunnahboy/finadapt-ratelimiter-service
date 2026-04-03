@@ -6,4 +6,7 @@ ktor:
       - ApplicationKt.module
 
 redis:
-  url: "redis://127.0.0.1:6379"
+  url="rediss://default:********@first-buffalo-75300.upstash.io:6379"
+
+groq:
+  apiKey: "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"
