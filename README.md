@@ -39,15 +39,15 @@ ktor:
     port: 8080
   application:
     modules:
-      - com.finadapt.backend.ApplicationKt.module
+      -  ApplicationKt.module
 
 redis:
-  url: "redis://127.0.0.1:6379" # Swap with rediss://... Upstash URL in production
+  url: ${REDIS_URL}
 
 llm:
-  apiKey: "YOUR_API_KEY_HERE"
-  baseUrl: "[https://api.groq.com/openai/v1/chat/completions](https://api.groq.com/openai/v1/chat/completions)" # Or OpenAI, etc.
-  model: "llama3-8b-8192"
+  apiKey: ${LLM_API_KEY}
+  baseUrl: ${LLM_BASE_URL}
+  model: ${LLM_MODEL}
  Building & Running
 To run the project locally, ensure you have filled out the application.yaml and have a local Redis instance running on port 6379. You can spin one up quickly using Docker:
 
