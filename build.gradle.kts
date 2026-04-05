@@ -30,6 +30,8 @@ dependencies {
     implementation("io.ktor:ktor-client-content-negotiation")
     //ensure JSON works in the client
     implementation("io.ktor:ktor-serialization-kotlinx-json")
+    implementation("ch.qos.logback:logback-classic:1.5.25")
+
 
     //SECURITY PATCHES
     constraints {
