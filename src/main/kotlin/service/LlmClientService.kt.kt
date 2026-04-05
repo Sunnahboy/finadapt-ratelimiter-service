@@ -5,6 +5,7 @@ import io.ktor.client.call.*
 import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.ServerResponseException
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.io.IOException
 import kotlinx.serialization.Serializable
@@ -24,38 +25,41 @@ class LlmClientService (
     //Talks to the API endpoint
     suspend fun askAi(userPrompt: String): Result<String> {
         return try {
-            val response: LlmResponse = httpClient.post(baseUrl){
-            header(HttpHeaders.Authorization, "Bearer $apiKey")
-            contentType(ContentType.Application.Json)
-            //JSON body
-            setBody(
-                LlmRequest(
-                    model = model,
-                    messages = listOf (LlmMessage(role = "user", content = userPrompt))
+            val response = httpClient.post(baseUrl){
+                header(HttpHeaders.Authorization, "Bearer $apiKey")
+                contentType(ContentType.Application.Json)
+                //JSON body
+                setBody(
+                    LlmRequest(
+                        model = model,
+                        messages = listOf (LlmMessage(role = "user", content = userPrompt))
+                    )
                 )
-            )
-        }.body()
-        val aiText = response.choices.firstOrNull()?.message?.content//extract actual text
-        if (aiText != null){
-            Result.success(aiText)
-        } else {
-            Result.failure(Exception("Groq API returned an empty response."))
-        }
+            }
+            //SAFELY CHECK THE STATUS FIRST
+            if (response.status.isSuccess()) {
+                val llmResponse: LlmResponse = response.body()
+                val aiText = llmResponse.choices.firstOrNull()?.message?.content
+
+                if (aiText != null){
+                    Result.success(aiText)
+                } else {
+                    Result.failure(Exception("API returned an empty response."))
+                }
+            } else {
+                //If  returns 401, 404, etc., we grab the exact error message!
+                val errorBody = response.bodyAsText()
+                Result.failure(Exception("API Rejected Request (${response.status}): $errorBody"))
+            }
 
        } catch (e: ClientRequestException) {
-            //Catches 4xx errors
             Result.failure(Exception("Client Error (${e.response.status}): Check API key or request format."))
         } catch (e: ServerResponseException) {
-            //Catches 5xx errors
             Result.failure(Exception("Provider Error (${e.response.status}): The AI service is currently unavailable."))
-        } catch (e: IOException) {
-            //Catches network failures (timeout, DNS resolution)
+        } catch (_: IOException) {
             Result.failure(Exception("Network Error: Failed to connect to AI provider."))
         } catch (e: Exception) {
-            //Fallback for everything
             Result.failure(Exception("An unexpected error occurred: ${e.localizedMessage}"))
         }
-
-
     }
 }
