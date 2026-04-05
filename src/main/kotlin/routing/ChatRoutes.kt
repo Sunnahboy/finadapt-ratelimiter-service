@@ -14,16 +14,16 @@ fun Application.chatRoutes(rateLimiterService: RateLimiterService, llmClientServ
     routing {
 
         //The Chat Domain
-        withRateLimit(AppFeature.CHAT, rateLimiterService) {
-            post("/api/chat") {
+        withRateLimit("/api/chat", AppFeature.CHAT, rateLimiterService) {
+            post {
                 //safe to hit the API
                 call.respond(HttpStatusCode.OK, mapOf("message" to "LLM  response goes here!"))
             }
             //related endpoints here
         }
         //The Receipt Domain
-        withRateLimit(AppFeature.RECEIPT, rateLimiterService) {
-            post("/api/receipt") {
+        withRateLimit("/api/receipt", AppFeature.RECEIPT, rateLimiterService) {
+            post {
                 val userMessage = "Explain compound interest simply." //just test the connection
 
                 //Ask safely from the server

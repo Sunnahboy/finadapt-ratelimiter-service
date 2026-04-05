@@ -45,11 +45,12 @@ val RateLimitPlugin = createRouteScopedPlugin(
 
 // 3.DSL wrapper so ChatRoutes.kt doesn't have to change!
 fun Route.withRateLimit(
+    path: String,
     feature: AppFeature,
     rateLimiter: RateLimiterService,
     build: Route.() -> Unit
 ) {
-    route("") {
+    route(path) {
         install(RateLimitPlugin) {
             this.feature = feature
             this.rateLimiter = rateLimiter
