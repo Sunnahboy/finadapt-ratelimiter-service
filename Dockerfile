@@ -1,7 +1,7 @@
 #======================================
 #Stage 1: Cashe dependencies
 #======================================
-FROM gradle:8.10-jdk21-alpine AS cache
+FROM gradle:8.12-jdk21-alpine AS cache
 RUN mkdir -p /home/gradle/cache_home
 ENV GRADLE_USER_HOME=/home/gradle/cache_home
 
@@ -15,7 +15,7 @@ RUN gradle dependencies --no-daemon
 #================================================
 #Stage 2: Build Appliaction
 #================================================
-FROM gradle:8.10-jdk21-alpine AS build
+FROM gradle:8.12-jdk21-alpine AS build
 
 #Cashed dependencies from stage 1
 COPY --from=cache /home/gradle/cache_home /home/gradle/.gradle
