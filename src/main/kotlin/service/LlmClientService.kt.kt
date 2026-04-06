@@ -28,7 +28,6 @@ class LlmClientService (
             val response = httpClient.post(baseUrl){
                 header(HttpHeaders.Authorization, "Bearer $apiKey")
                 contentType(ContentType.Application.Json)
-                //JSON body
                 setBody(
                     LlmRequest(
                         model = model,
@@ -47,7 +46,7 @@ class LlmClientService (
                     Result.failure(Exception("API returned an empty response."))
                 }
             } else {
-                //If  returns 401, 404, etc., we grab the exact error message!
+                //If  returns 401, 404, etc., grab the exact error message
                 val errorBody = response.bodyAsText()
                 Result.failure(Exception("API Rejected Request (${response.status}): $errorBody"))
             }
