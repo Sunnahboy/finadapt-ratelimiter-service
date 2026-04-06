@@ -26,7 +26,7 @@ class RateLimiterService(private val redisson: RedissonClient) {
         val bucketName = "rate_limit:llm:${feature.id}:$userId"
         val rateLimiter = redisson.getRateLimiter(bucketName)
 
-        //CACHE CHECK:  returns true ONLY if and only if the item wasn't already in the set.
+        //CACHE CHECK:  returns true if and only if the item wasn't already in the set.
         if (initializedBuckets.add(bucketName)) {
             //double check redis in case restarted but ktor didn't
             if (!rateLimiter.isExists) {
