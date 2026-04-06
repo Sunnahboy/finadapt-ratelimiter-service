@@ -35,7 +35,7 @@ class LlmClientService (
                     )
                 )
             }
-            //SAFELY CHECK THE STATUS FIRST
+            //safely check the status first
             if (response.status.isSuccess()) {
                 val llmResponse: LlmResponse = response.body()
                 val aiText = llmResponse.choices.firstOrNull()?.message?.content
