@@ -7,32 +7,32 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-//Define the Plugin Configuration (What data does the plugin need?)
+//Define the Plugin Configuration
 class RateLimitConfig {
     lateinit var feature: AppFeature
     lateinit var rateLimiter: RateLimiterService
 }
 
-// 2. Create the Route Scoped Plugin
+//Create the Route Scoped Plugin
 val RateLimitPlugin = createRouteScopedPlugin(
     name = "RateLimitPlugin",
     createConfiguration = ::RateLimitConfig
 ) {
-    // Read the config passed in during installation
+    //Read the config passed in during installation
     val feature = pluginConfig.feature
     val rateLimiter = pluginConfig.rateLimiter
 
-    // onCall runs automatically before your route's business logic
+    //onCall runs automatically before your route's business logic
     onCall { call ->
         val userId = call.request.headers["X-User-Id"]
 
-        // 1. Check Auth
+        //Check Auth
         if (userId.isNullOrBlank()) {
             call.respond(HttpStatusCode.BadRequest, mapOf("error" to "Missing X-User-Id header"))
-            return@onCall //Halts execution. The actual route never runs.
+            return@onCall //Halts execution.
         }
 
-        // 2. Check Tokens
+        //Check Tokens
         if (!rateLimiter.tryAcquire(userId, feature)) {
             call.respond(
                 HttpStatusCode.TooManyRequests,
@@ -43,7 +43,7 @@ val RateLimitPlugin = createRouteScopedPlugin(
     }
 }
 
-// 3.DSL wrapper so ChatRoutes.kt doesn't have to change!
+//DSL wrapper so ChatRoutes.kt doesn't have to change!
 fun Route.withRateLimit(
     path: String,
     feature: AppFeature,
