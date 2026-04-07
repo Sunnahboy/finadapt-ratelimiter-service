@@ -14,17 +14,24 @@ import java.util.concurrent.atomic.AtomicInteger //REQUIRED FOR ROUND ROBIN
 
 @Serializable data class LlmMessage(val role: String, val content: String)
 @Serializable data class ResponseFormat(val type: String)
-@Serializable data class LlmRequest(val model: String, val responseFormat: ResponseFormat, val messages: List<LlmMessage>)
-@Serializable data class LlmChoice(val message: LlmMessage)
+@Serializable data class LlmRequest(
+    val model: String,
+    val responseFormat: ResponseFormat,
+    val messages: List<LlmMessage>,
+    val temperature: Double = 0.0,
+    val maxTokens: Int = 1000
+)
+@Serializable data class LlmChoice(
+    val message: LlmMessage
+)
 @Serializable data class LlmResponse(val choices: List<LlmChoice>)
 
 class LlmClientService(
     private val httpClient: HttpClient,
     private val apiKey: String,
     private val baseUrl: String,
-    private val primaryChatModel: String
 ) {
-    private val chatModels = listOf(primaryChatModel, "llama-3.1-8b-instant", "mixtral-8x7b-32768").distinct()
+    private val chatModels = listOf("llama-3.1-8b-instant", "mixtral-8x7b-32768").distinct()
 
     private val receiptModels = listOf(
         "llama-3.3-70b-versatile",
@@ -103,8 +110,8 @@ class LlmClientService(
                 lastException = Exception("Client Error (${e.response.status}).")
             } catch (e: ServerResponseException) {
                 lastException = Exception("Provider Error (${e.response.status}).")
-            } catch (e: IOException) {
-                lastException = Exception("Network Error connecting to Groq.")
+            } catch (_: IOException) {
+                lastException = Exception("Network Error connecting to LLm.")
             } catch (e: Exception) {
                 lastException = e
             }
