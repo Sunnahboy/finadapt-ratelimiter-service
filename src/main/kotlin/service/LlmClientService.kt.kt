@@ -30,8 +30,10 @@ class LlmClientService(
     private val httpClient: HttpClient,
     private val apiKey: String,
     private val baseUrl: String,
+    primaryChatModel: String
+
 ) {
-    private val chatModels = listOf("llama-3.1-8b-instant", "mixtral-8x7b-32768").distinct()
+    private val chatModels = listOf(primaryChatModel,"llama-3.1-8b-instant", "mixtral-8x7b-32768").distinct()
 
     private val receiptModels = listOf(
         "llama-3.3-70b-versatile",
