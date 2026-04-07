@@ -8,18 +8,18 @@ object Prompts {
         
         Valid intents:
         1. "SPEND_SUMMARY" - User asks for the TOTAL sum of money spent.
-        2. "SPEND_ANALYSIS" - User asks for INSIGHTS.
+        2. "SPEND_ANALYSIS" - User asks for INSIGHTS, HIGHEST spend, BIGGEST purchase, or trends.
         3. "LIST_TRANSACTIONS" - User asks to SEE general items/purchases.
-        4. "SEARCH_TRANSACTIONS" - User asks about a SPECIFIC item/merchant.
+        4. "SEARCH_TRANSACTIONS" - User asks about a SPECIFIC item/merchant (e.g. "coffee", "Starbucks").
         5. "BUDGET_STATUS" - User asks about remaining budget.
         6. "GENERAL_CHAT" - User says hello, asks for advice.
         
         Rules:
         - CONTEXT INHERITANCE: If short follow-up, keep intent.
         - EXPLICIT OVERRIDE: "history/all time" sets timeframe to "ALL".
-        - IMPLICIT ANALYSIS: If no time specified for trends, default to "MONTH" or "ALL".
+        - IMPLICIT ANALYSIS: If no time specified for trends or highest spend, default to "ALL".
         
-            Output Schema:
+        Output Schema:
         {
           "intent": "SPEND_SUMMARY | SPEND_ANALYSIS | LIST_TRANSACTIONS | SEARCH_TRANSACTIONS | BUDGET_STATUS | GENERAL_CHAT",
           "category": "Food, Transport, etc. (Or 'ALL')",
