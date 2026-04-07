@@ -9,6 +9,7 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.coroutines.delay
 import kotlinx.io.IOException
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.util.concurrent.atomic.AtomicInteger //REQUIRED FOR ROUND ROBIN
 
@@ -16,10 +17,10 @@ import java.util.concurrent.atomic.AtomicInteger //REQUIRED FOR ROUND ROBIN
 @Serializable data class ResponseFormat(val type: String)
 @Serializable data class LlmRequest(
     val model: String,
-    val responseFormat: ResponseFormat,
+    @SerialName("response_format") val responseFormat: ResponseFormat,
     val messages: List<LlmMessage>,
     val temperature: Double = 0.0,
-    val maxTokens: Int = 1000
+    @SerialName("max_tokens") val maxTokens: Int = 1000
 )
 @Serializable data class LlmChoice(
     val message: LlmMessage
