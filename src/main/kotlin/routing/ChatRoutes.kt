@@ -1,5 +1,6 @@
 package routing
 
+import service.Prompts // 🟢 Import your new object
 import service.AppFeature
 import service.RateLimiterService
 import io.ktor.http.HttpStatusCode
@@ -8,54 +9,51 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerialName
 import service.LlmClientService
-import kotlin.collections.mapOf
 
-//define what the android app will send
 @Serializable
 data class ChatRequest(val prompt: String)
 
+@Serializable
+data class ReceiptRequest(@SerialName("raw_text") val rawText: String)
+
 fun Application.chatRoutes(rateLimiterService: RateLimiterService, llmClientService: LlmClientService) {
-
     routing {
-
-        //The Chat Domain
+        //Chat Domain
         withRateLimit("/api/chat", AppFeature.CHAT, rateLimiterService) {
             post {
-                //read the incoming JSON request from Android
-                val request = try{
-                    call.receive<ChatRequest>()
-                }catch(_:Exception){
-                    call.respond(
-                        HttpStatusCode.BadRequest,
-                        mapOf("error" to "Invalid format. Expected JSON like { \"prompt\": \"your question\" }")
-                    )
+                val request = try { call.receive<ChatRequest>() }
+                catch(_: Exception) {
+                    call.respond(HttpStatusCode.BadRequest, mapOf("error" to "Invalid format."))
                     return@post
                 }
-                //Ask using the dynamic prompt  grabbed
-                val result = llmClientService.askAi(request.prompt)
 
-                //safely unwrap and send back the result
+                val result = llmClientService.askChatAi(Prompts.CHAT_SYSTEM_PROMPT, request.prompt)
+
                 result.fold(
-                    onSuccess = {aiResponse->
-                        call.respond(HttpStatusCode.OK, mapOf("message" to aiResponse))
-                    },
-                    onFailure = {error ->
-                        call.respond(
-                            HttpStatusCode.BadGateway,
-                            mapOf("error" to (error.message ?: "Failed to contact AI service."))
-                        )
-                    }
+                    onSuccess = { call.respond(HttpStatusCode.OK, mapOf("message" to it)) },
+                    onFailure = { call.respond(HttpStatusCode.BadGateway, mapOf("error" to (it.message ?: "Failed"))) }
                 )
-
             }
         }
-        // Receipt domain
-        withRateLimit("/chat", AppFeature.CHAT, rateLimiterService) {
+
+        //Receipt Domain
+        withRateLimit("/api/receipt", AppFeature.RECEIPT, rateLimiterService) {
             post {
-                call.respond(HttpStatusCode.OK, mapOf("message" to "Receipt scanner endpoint ready!"))
+                val request = try { call.receive<ReceiptRequest>() }
+                catch(_: Exception) {
+                    call.respond(HttpStatusCode.BadRequest, mapOf("error" to "Invalid format."))
+                    return@post
+                }
+
+                val result = llmClientService.parseReceiptAi(Prompts.RECEIPT_SYSTEM_PROMPT, "RECEIPT TEXT:\n${request.rawText}")
+
+                result.fold(
+                    onSuccess = { call.respondText(it, io.ktor.http.ContentType.Application.Json, HttpStatusCode.OK) },
+                    onFailure = { call.respond(HttpStatusCode.BadGateway, mapOf("error" to (it.message ?: "Failed"))) }
+                )
             }
         }
-
     }
 }
