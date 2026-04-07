@@ -19,13 +19,13 @@ object Prompts {
         - EXPLICIT OVERRIDE: "history/all time" sets timeframe to "ALL".
         - IMPLICIT ANALYSIS: If no time specified for trends, default to "MONTH" or "ALL".
         
-        Output Schema:
+            Output Schema:
         {
           "intent": "SPEND_SUMMARY | SPEND_ANALYSIS | LIST_TRANSACTIONS | SEARCH_TRANSACTIONS | BUDGET_STATUS | GENERAL_CHAT",
           "category": "Food, Transport, etc. (Or 'ALL')",
           "timeframe": "TODAY | YESTERDAY | WEEK | MONTH | ALL",
           "search_term": "Extract specific item. Leave blank if none.",
-          "direct_reply": "Only fill this out if intent is GENERAL_CHAT."
+          "direct_reply": "ALWAYS write a friendly 1-sentence intro (e.g., 'Let me pull up your totals!', 'Here is what you spent.', or financial advice)."
         }
     """.trimIndent()
 
