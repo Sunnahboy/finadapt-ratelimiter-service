@@ -3,7 +3,7 @@ package service
 import org.redisson.api.RateIntervalUnit
 import org.redisson.api.RateType
 import org.redisson.api.RedissonClient
-
+//from RateLimitService.kt
 enum class AppFeature(
     val id: String,
     val capacity: Long,
@@ -29,7 +29,6 @@ class RateLimiterService(private val redisson: RedissonClient) {
             feature.refillTokens,
             feature.refillUnit
         )
-
         // Try to consume 1 token. Returns true if allowed, false if rate limited.
         return rateLimiter.tryAcquire(1)
     }

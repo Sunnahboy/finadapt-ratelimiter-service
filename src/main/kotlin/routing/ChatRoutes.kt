@@ -1,6 +1,6 @@
 package routing
 
-import service.Prompts // 🟢 Import your new object
+import service.Prompts
 import service.AppFeature
 import service.RateLimiterService
 import io.ktor.http.HttpStatusCode
