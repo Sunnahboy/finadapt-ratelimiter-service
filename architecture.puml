@@ -1,0 +1,63 @@
+@startuml architecture
+!theme plain
+skinparam componentStyle rectangle
+
+title Adaptive Finance AI Backend - Architecture Diagram
+
+' Define actors and external systems
+actor "Mobile Client\n(Android App)" as Client
+database "Redis\n(Token Bucket Storage)" as Redis
+cloud "LLM Providers\n(OpenAI, Groq, etc.)" as LLM
+
+' Main application boundary
+package "Ktor Application\n(Port 8080)" {
+    node "Routing Layer" {
+        component "ChatRoutes\n/api/chat, /api/receipt" as ChatRoutes
+        component "RateLimitGuard\n(Route Scoped Plugin)" as RateLimitGuard
+    }
+    
+    node "Service Layer" {
+        component "RateLimiterService\n(Redisson Client)" as RateLimiterService
+        component "LlmClientService\n(Ktor HttpClient)" as LlmClientService
+    }
+    
+    node "Configuration" {
+        component "Application.yaml\n(Env: REDIS_URL, LLM_API_KEY, etc.)" as Config
+    }
+}
+
+' Data flow
+Client --> ChatRoutes : HTTP POST\nX-User-Id Header
+ChatRoutes --> RateLimitGuard : withRateLimit()
+RateLimitGuard --> RateLimiterService : tryAcquire(userId, feature)
+RateLimiterService --> Redis : Token Bucket Check/Consume
+Redis --> RateLimiterService : Allow/Deny
+RateLimiterService --> RateLimitGuard : Boolean Result
+RateLimitGuard --> ChatRoutes : Continue/Reject (429)
+ChatRoutes --> LlmClientService : askChatAi() / parseReceiptAi()
+LlmClientService --> LLM : HTTP POST\n(Round Robin Models)
+LLM --> LlmClientService : JSON Response
+LlmClientService --> ChatRoutes : Result<String>
+ChatRoutes --> Client : HTTP Response\n(JSON)
+
+' Styling
+note right of RateLimiterService
+  - Token Bucket Algorithm
+  - Per-Feature Limits:
+    * CHAT: 15 capacity, 5/min refill
+    * RECEIPT: 5 capacity, 2/min refill
+end note
+
+note right of LlmClientService
+  - Round Robin Model Selection
+  - Automatic Fallback
+  - Retry with Exponential Delay
+end note
+
+note bottom of Client
+  Endpoints:
+  - POST /api/chat
+  - POST /api/receipt
+end note
+
+@enduml

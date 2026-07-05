@@ -22,7 +22,7 @@ val RateLimitPlugin = createRouteScopedPlugin(
     val feature = pluginConfig.feature
     val rateLimiter = pluginConfig.rateLimiter
 
-    //onCall runs automatically before your route's business logic
+    //onCall runs automatically before  route's business logic
     onCall { call ->
         val userId = call.request.headers["X-User-Id"]
 
